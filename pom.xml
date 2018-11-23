@@ -3,12 +3,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <name>mongobee</name>
+    <name>mongobeej</name>
     <description>MongoDB data migration tool for Java</description>
     <url>https://github.com/mongobee/mongobee</url>
 
-    <groupId>com.github.mongobee</groupId>
-    <artifactId>mongobee</artifactId>
+    <groupId>com.github.mongobeej</groupId>
+    <artifactId>mongobeej</artifactId>
     <version>0.14-SNAPSHOT</version>
 
     <licenses>
@@ -20,16 +20,20 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:mongobee/mongobee.git</connection>
-        <developerConnection>scm:git:git@github.com:mongobee/mongobee.git</developerConnection>
-        <url>git@github.com:mongobee/mongobee.git</url>
-        <tag>mongobee-tag</tag>
+        <connection>scm:git:git@github.com:mongobeej/mongobeej.git</connection>
+        <developerConnection>scm:git:git@github.com:mongobeej/mongobeej.git</developerConnection>
+        <url>git@github.com:mongobeej/mongobeej.git</url>
+        <tag>mongobeej-tag</tag>
     </scm>
 
     <developers>
         <developer>
-            <id>lstolowski</id>
-            <name>lstolowski</name>
+          <id>lstolowski</id>
+          <name>lstolowski</name>
+        </developer>
+        <developer>
+            <id>cybuch</id>
+            <name>pnowak</name>
         </developer>
     </developers>
 

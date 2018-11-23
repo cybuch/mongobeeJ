@@ -19,7 +19,7 @@ The goal is to keep this tool simple and comfortable to use.
 With Maven
 ```xml
 <dependency>
-  <groupId>com.github.mongobee</groupId>
+  <groupId>com.github.mongobeej</groupId>
   <artifactId>mongobee</artifactId>
   <version>0.13</version>
 </dependency>
@@ -27,10 +27,7 @@ With Maven
 With Gradle
 ```groovy
 compile 'org.javassist:javassist:3.18.2-GA' // workaround for ${javassist.version} placeholder issue*
-compile 'com.github.mongobee:mongobee:0.13'
-```
-
-### Usage with Spring
+compile mcom.github.mongobeejsage with Spring
 
 You need to instantiate Mongobee object and provide some configuration.
 If you use Spring can be instantiated as a singleton bean in the Spring context. 
@@ -234,8 +231,7 @@ You can exclude mongo-java-driver from **mongobee**  and use your dependency onl
 </dependency>
 
 <dependency>
-  <groupId>com.github.mongobee</groupId>
-  <artifactId>mongobee</artifactId>
+  <groupId>com.github.mongobee</groupcom.github.mongobeejongobee</artifactId>
   <version>0.9</version>
   <exclusions>
     <exclusion>
