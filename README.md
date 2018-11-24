@@ -1,16 +1,15 @@
-![mongobee](https://raw.githubusercontent.com/mongobee/mongobee/master/misc/mongobee_min.png)
-
-[![Build Status](https://travis-ci.org/mongobee/mongobee.svg?branch=master)](https://travis-ci.org/mongobee/mongobee) [![Coverity Scan Build Status](https://scan.coverity.com/projects/2721/badge.svg)](https://scan.coverity.com/projects/2721) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.mongobee/mongobee/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.mongobee/mongobee) [![Licence](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/mongobee/mongobee/blob/master/LICENSE)
+[![Licence](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/cybuch/mongobeeJ/blob/master/LICENSE)
 ---
 
 
-**mongobee** is a Java tool which helps you to *manage changes* in your MongoDB and *synchronize* them with your application.
+**mongobeeJ** is a Java tool which helps you to *manage changes* in your MongoDB and *synchronize* them with your application.
 The concept is very similar to other db migration tools such as [Liquibase](http://www.liquibase.org) or [Flyway](http://flywaydb.org) but *without using XML/JSON/YML files*.
+mongobeeJ is built on top of [mongobee](https://github.com/mongobee/mongobee)
 
 The goal is to keep this tool simple and comfortable to use.
 
 
-**mongobee** provides new approach for adding changes (change sets) based on Java classes and methods with appropriate annotations.
+**mongobeeJ** provides new approach for adding changes (change sets) based on Java classes and methods with appropriate annotations.
 
 ## Getting started
 
@@ -28,7 +27,9 @@ With Gradle
 ```groovy
 compile 'org.javassist:javassist:3.18.2-GA' // workaround for ${javassist.version} placeholder issue*
 compile mcom.github.mongobeejsage with Spring
+```
 
+### Usage with Spring
 You need to instantiate Mongobee object and provide some configuration.
 If you use Spring can be instantiated as a singleton bean in the Spring context. 
 In this case the migration process will be executed automatically on startup.
@@ -171,7 +172,7 @@ public void someChange5(MongoTemplate mongoTemplate, Environment environment) {
 
 ### Using Spring profiles
      
-**mongobee** accepts Spring's `org.springframework.context.annotation.Profile` annotation. If a change log or change set class is annotated  with `@Profile`, 
+**mongobeeJ** accepts Spring's `org.springframework.context.annotation.Profile` annotation. If a change log or change set class is annotated  with `@Profile`, 
 then it is activated for current application profiles.
 
 _Example 1_: annotated change set will be invoked for a `dev` profile
@@ -211,7 +212,7 @@ public Mongobee mongobee(Environment environment) {
 
 ##### Mongo java driver conflicts
 
-**mongobee** depends on `mongo-java-driver`. If your application has mongo-java-driver dependency too, there could be a library conflicts in some cases.
+**mongobeeJ** depends on `mongo-java-driver`. If your application has mongo-java-driver dependency too, there could be a library conflicts in some cases.
 
 **Exception**:
 ```
@@ -222,7 +223,7 @@ com.mongodb.WriteConcernException: { "serverUsed" : "localhost" ,
 
 **Workaround**:
 
-You can exclude mongo-java-driver from **mongobee**  and use your dependency only. Maven example (pom.xml) below:
+You can exclude mongo-java-driver from **mongobeeJ**  and use your dependency only. Maven example (pom.xml) below:
 ```xml
 <dependency>
     <groupId>org.mongodb</groupId>
@@ -231,8 +232,9 @@ You can exclude mongo-java-driver from **mongobee**  and use your dependency onl
 </dependency>
 
 <dependency>
-  <groupId>com.github.mongobee</groupcom.github.mongobeejongobee</artifactId>
-  <version>0.9</version>
+  <groupId>com.github.mongobeej</groupId>
+  <artifactId>mongobeej</artifactId>
+  <version>0.14</version>
   <exclusions>
     <exclusion>
       <groupId>org.mongodb</groupId>

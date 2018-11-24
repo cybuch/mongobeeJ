@@ -19,13 +19,6 @@
         </license>
     </licenses>
 
-    <scm>
-        <connection>scm:git:git@github.com:mongobeej/mongobeej.git</connection>
-        <developerConnection>scm:git:git@github.com:mongobeej/mongobeej.git</developerConnection>
-        <url>git@github.com:mongobeej/mongobeej.git</url>
-        <tag>mongobeej-tag</tag>
-    </scm>
-
     <developers>
         <developer>
           <id>lstolowski</id>
