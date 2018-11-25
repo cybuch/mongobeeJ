@@ -5,9 +5,9 @@
 
     <name>mongobeej</name>
     <description>MongoDB data migration tool for Java</description>
-    <url>https://github.com/mongobee/mongobee</url>
+    <url>https://github.com/cybuch/mongobeeJ</url>
 
-    <groupId>com.github.mongobeej</groupId>
+    <groupId>com.github.cybuch</groupId>
     <artifactId>mongobeej</artifactId>
     <version>0.14-SNAPSHOT</version>
 
@@ -18,6 +18,13 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+
+    <scm>
+      <connection>scm:git:https://github.com/cybuch/mongobeeJ.git</connection>
+      <url>http://github.com/cybuch/mongobeeJ</url>
+      <developerConnection>scm:git:https://github.com/cybuch/mongobeeJ.git</developerConnection>
+      <tag>HEAD</tag>
+  </scm>
 
     <developers>
         <developer>
@@ -138,7 +145,7 @@
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.2</version>
+                        <version>1.6.7</version>
                         <extensions>true</extensions>
                         <configuration>
                             <serverId>ossrh</serverId>
@@ -175,7 +182,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.5</version>
+                        <version>1.6</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
