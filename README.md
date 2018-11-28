@@ -18,16 +18,19 @@ The goal is to keep this tool simple and comfortable to use.
 With Maven
 ```xml
 <dependency>
-  <groupId>com.github.mongobeej</groupId>
-  <artifactId>mongobee</artifactId>
-  <version>0.13</version>
+  <groupId>com.github.cybuch</groupId>
+  <artifactId>mongobeej</artifactId>
+  <version>0.14</version>
 </dependency>
 ```
 With Gradle
 ```groovy
 compile 'org.javassist:javassist:3.18.2-GA' // workaround for ${javassist.version} placeholder issue*
-compile mcom.github.mongobeejsage with Spring
+compile 'com.github.mongobeej'
 ```
+
+### Migrating from Mongobee
+Replace mongobee dependency with mongobeeJ and then simply change `com.github.mongobee` in import statements to: `com.github.mongobeej`
 
 ### Usage with Spring
 You need to instantiate Mongobee object and provide some configuration.
