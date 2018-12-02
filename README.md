@@ -25,8 +25,7 @@ With Maven
 ```
 With Gradle
 ```groovy
-compile 'org.javassist:javassist:3.18.2-GA' // workaround for ${javassist.version} placeholder issue*
-compile 'com.github.mongobeej'
+compile 'com.github.cybuch:mongobeej:0.14'
 ```
 
 ### Migrating from Mongobee
