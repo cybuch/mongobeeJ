@@ -1,23 +1,11 @@
 package com.github.mongobeej.dao;
 
-import org.bson.Document;
-
 import com.github.mongobeej.changeset.ChangeEntry;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexOptions;
+import org.bson.Document;
 
-/**
- * @author lstolowski
- * @since 10.12.14
- */
 public class ChangeEntryIndexDao {
-
-  private String changelogCollectionName;
-	  
-  public ChangeEntryIndexDao(String changelogCollectionName) {
-	this.changelogCollectionName = changelogCollectionName;
-  }
 
   public void createRequiredUniqueIndex(MongoCollection<Document> collection) {
     collection.createIndex(new Document()
@@ -27,14 +15,18 @@ public class ChangeEntryIndexDao {
     );
   }
 
-  public Document findRequiredChangeAndAuthorIndex(MongoDatabase db) {
-    MongoCollection<Document> indexes = db.getCollection("system.indexes");
-    Document index = indexes.find(new Document()
-        .append("ns", db.getName() + "." + changelogCollectionName)
-        .append("key", new Document().append(ChangeEntry.KEY_CHANGEID, 1).append(ChangeEntry.KEY_AUTHOR, 1))
-    ).first();
+  public Document findRequiredChangeAndAuthorIndex(MongoCollection<Document> collection) {
+    for (Document document : collection.listIndexes()) {
+      Document indexKeys = ((Document) document.get("key"));
+      if (indexKeys != null && isChangelogIndex(indexKeys)) {
+        return document;
+      }
+    }
+    return null;
+  }
 
-    return index;
+  private boolean isChangelogIndex(Document indexKeys) {
+    return indexKeys.get(ChangeEntry.KEY_CHANGEID) != null && indexKeys.get(ChangeEntry.KEY_AUTHOR) != null;
   }
 
   public boolean isUnique(Document index) {
@@ -49,9 +41,4 @@ public class ChangeEntryIndexDao {
   public void dropIndex(MongoCollection<Document> collection, Document index) {
     collection.dropIndex(index.get("name").toString());
   }
-
-  public void setChangelogCollectionName(String changelogCollectionName) {
-	this.changelogCollectionName = changelogCollectionName;
-  }
-
 }

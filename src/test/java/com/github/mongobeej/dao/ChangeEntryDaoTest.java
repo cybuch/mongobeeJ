@@ -1,28 +1,18 @@
 package com.github.mongobeej.dao;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import org.bson.Document;
-import org.junit.Test;
-
 import com.github.fakemongo.Fongo;
 import com.github.mongobeej.exception.MongobeeConfigurationException;
 import com.github.mongobeej.exception.MongobeeLockException;
 import com.mongodb.FongoMongoCollection;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
+import org.bson.Document;
+import org.junit.Test;
 
-/**
- * @author lstolowski
- * @since 10.12.14
- */
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.*;
+
 public class ChangeEntryDaoTest {
   private static final String TEST_SERVER = "testServer";
   private static final String DB_NAME = "mongobeetest";
@@ -46,7 +36,7 @@ public class ChangeEntryDaoTest {
     when(mongoClient.getDatabase(anyString())).thenReturn(db);
 
     ChangeEntryIndexDao indexDaoMock = mock(ChangeEntryIndexDao.class);
-    when(indexDaoMock.findRequiredChangeAndAuthorIndex(db)).thenReturn(null);
+    when(indexDaoMock.findRequiredChangeAndAuthorIndex(db.getCollection(CHANGELOG_COLLECTION_NAME))).thenReturn(null);
     dao.setIndexDao(indexDaoMock);
 
     // when
@@ -69,7 +59,7 @@ public class ChangeEntryDaoTest {
     ChangeEntryDao dao = new ChangeEntryDao(CHANGELOG_COLLECTION_NAME, LOCK_COLLECTION_NAME, WAIT_FOR_LOCK,
         CHANGE_LOG_LOCK_WAIT_TIME, CHANGE_LOG_LOCK_POLL_RATE, THROW_EXCEPTION_IF_CANNOT_OBTAIN_LOCK);
     ChangeEntryIndexDao indexDaoMock = mock(ChangeEntryIndexDao.class);
-    when(indexDaoMock.findRequiredChangeAndAuthorIndex(db)).thenReturn(new Document());
+    when(indexDaoMock.findRequiredChangeAndAuthorIndex(db.getCollection(CHANGELOG_COLLECTION_NAME))).thenReturn(new Document());
     when(indexDaoMock.isUnique(any(Document.class))).thenReturn(true);
     dao.setIndexDao(indexDaoMock);
 
@@ -93,7 +83,7 @@ public class ChangeEntryDaoTest {
     ChangeEntryDao dao = new ChangeEntryDao(CHANGELOG_COLLECTION_NAME, LOCK_COLLECTION_NAME, WAIT_FOR_LOCK,
         CHANGE_LOG_LOCK_WAIT_TIME, CHANGE_LOG_LOCK_POLL_RATE, THROW_EXCEPTION_IF_CANNOT_OBTAIN_LOCK);
     ChangeEntryIndexDao indexDaoMock = mock(ChangeEntryIndexDao.class);
-    when(indexDaoMock.findRequiredChangeAndAuthorIndex(db)).thenReturn(new Document());
+    when(indexDaoMock.findRequiredChangeAndAuthorIndex(any())).thenReturn(new Document());
     when(indexDaoMock.isUnique(any(Document.class))).thenReturn(false);
     dao.setIndexDao(indexDaoMock);
 
@@ -165,7 +155,7 @@ public class ChangeEntryDaoTest {
         CHANGE_LOG_LOCK_WAIT_TIME, CHANGE_LOG_LOCK_POLL_RATE, THROW_EXCEPTION_IF_CANNOT_OBTAIN_LOCK);
 
     LockDao lockDao = mock(LockDao.class);
-    when(lockDao.acquireLock(any(MongoDatabase.class))).thenReturn(false,true);
+    when(lockDao.acquireLock(any(MongoDatabase.class))).thenReturn(false, true);
     dao.setLockDao(lockDao);
 
     dao.connectMongoDb(mongoClient, DB_NAME);
@@ -225,7 +215,7 @@ public class ChangeEntryDaoTest {
   }
 
   @Test
-  public void shouldCheckLockHeldFromFromLockDao() throws Exception {
+  public void shouldCheckLockHeldFromLockDao() throws Exception {
 
     // given
     MongoClient mongoClient = mock(MongoClient.class);
@@ -248,5 +238,4 @@ public class ChangeEntryDaoTest {
     // then
     assertTrue(lockHeld);
   }
-
 }

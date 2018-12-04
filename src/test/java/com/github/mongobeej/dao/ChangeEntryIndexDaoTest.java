@@ -19,17 +19,13 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 
-/**
- * @author lstolowski
- * @since 10.12.14
- */
 public class ChangeEntryIndexDaoTest {
   private static final String TEST_SERVER = "testServer";
   private static final String DB_NAME = "mongobeetest";
   private static final String CHANGEID_AUTHOR_INDEX_NAME = "changeId_1_author_1";
   private static final String CHANGELOG_COLLECTION_NAME = "dbchangelog";
 
-  private ChangeEntryIndexDao dao = new ChangeEntryIndexDao(CHANGELOG_COLLECTION_NAME);
+  private ChangeEntryIndexDao dao = new ChangeEntryIndexDao();
 
   @Test
   public void shouldCreateRequiredUniqueIndex() {

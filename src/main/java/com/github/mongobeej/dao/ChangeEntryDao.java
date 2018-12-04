@@ -1,13 +1,5 @@
 package com.github.mongobeej.dao;
 
-import static org.springframework.util.StringUtils.hasText;
-
-import java.util.Date;
-
-import org.bson.Document;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.github.mongobeej.changeset.ChangeEntry;
 import com.github.mongobeej.exception.MongobeeConfigurationException;
 import com.github.mongobeej.exception.MongobeeConnectionException;
@@ -17,11 +9,14 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import org.bson.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- * @author lstolowski
- * @since 27/07/2014
- */
+import java.util.Date;
+
+import static org.springframework.util.StringUtils.hasText;
+
 public class ChangeEntryDao {
   private static final Logger logger = LoggerFactory.getLogger("Mongobee dao");
 
@@ -37,9 +32,14 @@ public class ChangeEntryDao {
 
   private LockDao lockDao;
 
-  public ChangeEntryDao(String changelogCollectionName, String lockCollectionName, boolean waitForLock, long changeLogLockWaitTime,
-      long changeLogLockPollRate, boolean throwExceptionIfCannotObtainLock) {
-    this.indexDao = new ChangeEntryIndexDao(changelogCollectionName);
+  public ChangeEntryDao(
+      String changelogCollectionName,
+      String lockCollectionName,
+      boolean waitForLock,
+      long changeLogLockWaitTime,
+      long changeLogLockPollRate,
+      boolean throwExceptionIfCannotObtainLock) {
+    this.indexDao = new ChangeEntryIndexDao();
     this.lockDao = new LockDao(lockCollectionName);
     this.changelogCollectionName = changelogCollectionName;
     this.waitForLock = waitForLock;
@@ -153,7 +153,7 @@ public class ChangeEntryDao {
   }
 
   private void ensureChangeLogCollectionIndex(MongoCollection<Document> collection) {
-    Document index = indexDao.findRequiredChangeAndAuthorIndex(mongoDatabase);
+    Document index = indexDao.findRequiredChangeAndAuthorIndex(collection);
     if (index == null) {
       indexDao.createRequiredUniqueIndex(collection);
       logger.debug("Index in collection " + changelogCollectionName + " was created");
@@ -183,7 +183,6 @@ public class ChangeEntryDao {
   }
 
   public void setChangelogCollectionName(String changelogCollectionName) {
-	this.indexDao.setChangelogCollectionName(changelogCollectionName);
 	this.changelogCollectionName = changelogCollectionName;
   }
 
