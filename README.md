@@ -20,12 +20,12 @@ With Maven
 <dependency>
   <groupId>com.github.cybuch</groupId>
   <artifactId>mongobeej</artifactId>
-  <version>0.14</version>
+  <version>0.15</version>
 </dependency>
 ```
 With Gradle
 ```groovy
-compile 'com.github.cybuch:mongobeej:0.14'
+compile 'com.github.cybuch:mongobeej:0.15'
 ```
 
 ### Migrating from Mongobee
@@ -236,7 +236,7 @@ You can exclude mongo-java-driver from **mongobeeJ**  and use your dependency on
 <dependency>
   <groupId>com.github.mongobeej</groupId>
   <artifactId>mongobeej</artifactId>
-  <version>0.14</version>
+  <version>0.15</version>
   <exclusions>
     <exclusion>
       <groupId>org.mongodb</groupId>
