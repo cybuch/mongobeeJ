@@ -63,18 +63,6 @@ public class ProfileMatcher {
 				.anyMatch(ap -> positive.contains(ap));
 
 		return positiveHit;
-
-
-//		for (String profile : profiles) {
-//			if (profile != null && profile.length() > 0 && profile.charAt(0) == '!') {
-//				if (!activeProfiles.contains(profile.substring(1))) {
-//					return true;
-//				}
-//			} else if (activeProfiles.contains(profile)) {
-//				return true;
-//			}
-//		}
-//		return false;
 	}
 
 }
