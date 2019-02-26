@@ -30,8 +30,6 @@ public class ChangeService {
   private static final String DEFAULT_PROFILE = "default";
 
   private final String changeLogsBasePackage;
-
-
   private final ProfileMatcher profileMatcher;
 
   public ChangeService(String changeLogsBasePackage) {

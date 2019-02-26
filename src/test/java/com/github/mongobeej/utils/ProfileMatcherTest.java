@@ -13,11 +13,9 @@ import static org.mockito.Mockito.when;
 
 public class ProfileMatcherTest {
 
-  private ProfileMatcher profileMatcher;
-
   @Test
-  public void matchesPositive() throws Exception {
-    profileMatcher = new ProfileMatcher(asList("local"));
+  public void shouldMatchPositiveProfiles() throws Exception {
+    ProfileMatcher profileMatcher = new ProfileMatcher(asList("local"));
     AnnotatedElement annotatedElement = createAnnotatedElement(new String[]{"dev", "local"});
 
     List<?> result = profileMatcher.filterByActiveProfiles(asList(annotatedElement));
@@ -27,8 +25,8 @@ public class ProfileMatcherTest {
   }
 
   @Test
-  public void doesNotmatchPositive() throws Exception {
-    profileMatcher = new ProfileMatcher(asList("local"));
+  public void shouldNotMatchPositiveProfiles() throws Exception {
+    ProfileMatcher profileMatcher = new ProfileMatcher(asList("local"));
     AnnotatedElement annotatedElement = createAnnotatedElement(new String[]{"dev", "qa"});
 
     List<?> result = profileMatcher.filterByActiveProfiles(asList(annotatedElement));
@@ -37,8 +35,8 @@ public class ProfileMatcherTest {
   }
 
   @Test
-  public void matchesSingleNegative() throws Exception {
-    profileMatcher = new ProfileMatcher(asList("local"));
+  public void shouldMatchSingleNegativeProfile() throws Exception {
+    ProfileMatcher profileMatcher = new ProfileMatcher(asList("local"));
     AnnotatedElement annotatedElement = createAnnotatedElement(new String[]{"!dev"});
 
     List<?> result = profileMatcher.filterByActiveProfiles(asList(annotatedElement));
@@ -48,8 +46,8 @@ public class ProfileMatcherTest {
   }
 
   @Test
-  public void matchesMultiNegative() throws Exception {
-    profileMatcher = new ProfileMatcher(asList("local"));
+  public void shouldMatchMultiNegativeProfiles() throws Exception {
+    ProfileMatcher profileMatcher = new ProfileMatcher(asList("local"));
     AnnotatedElement annotatedElement = createAnnotatedElement(new String[]{"!dev", "!prod"});
 
     List<?> result = profileMatcher.filterByActiveProfiles(asList(annotatedElement));
@@ -59,8 +57,8 @@ public class ProfileMatcherTest {
   }
 
   @Test
-  public void missSingleNegative() throws Exception {
-    profileMatcher = new ProfileMatcher(asList("local"));
+  public void shouldNotMatchSingleNegativeProfiles() throws Exception {
+    ProfileMatcher profileMatcher = new ProfileMatcher(asList("local"));
     AnnotatedElement annotatedElement = createAnnotatedElement(new String[]{"!local"});
 
     List<?> result = profileMatcher.filterByActiveProfiles(asList(annotatedElement));
@@ -69,8 +67,8 @@ public class ProfileMatcherTest {
   }
 
   @Test
-  public void missMultiNegative() throws Exception {
-    profileMatcher = new ProfileMatcher(asList("prod"));
+  public void shouldNotMatchMultiNegativeProfiles() throws Exception {
+    ProfileMatcher profileMatcher = new ProfileMatcher(asList("prod"));
     AnnotatedElement annotatedElement = createAnnotatedElement(new String[]{"!preprod", "!prod"});
 
     List<?> result = profileMatcher.filterByActiveProfiles(asList(annotatedElement));
@@ -80,10 +78,15 @@ public class ProfileMatcherTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void throwsWithBothPositiveAndNegative() throws Exception {
-    profileMatcher = new ProfileMatcher(asList("prod"));
+    ProfileMatcher profileMatcher = new ProfileMatcher(asList("prod"));
     AnnotatedElement annotatedElement = createAnnotatedElement(new String[]{"!preprod", "prod"});
 
     profileMatcher.filterByActiveProfiles(asList(annotatedElement));
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void throwsWitNullActiveProfiles() throws Exception {
+    new ProfileMatcher(null);
   }
 
   private AnnotatedElement createAnnotatedElement(String[] t) {
