@@ -18,7 +18,7 @@ package com.github.mongobeej.utils;
 /**
  * Miscellaneous class utility methods.
  */
-public class ClassUtils {
+class ClassUtils {
 
   /**
    * Determine whether the {@link Class} identified by the supplied name is present
@@ -29,7 +29,7 @@ public class ClassUtils {
    * (may be {@code null}, which indicates the default class loader)
    * @return whether the specified class is present
    */
-  public static boolean isPresent(String className, ClassLoader classLoader) {
+  static boolean isPresent(String className, ClassLoader classLoader) {
     try {
       Class.forName(className);
       return true;

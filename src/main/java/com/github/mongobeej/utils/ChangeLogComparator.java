@@ -7,29 +7,20 @@ import java.util.Comparator;
 
 import static org.springframework.util.StringUtils.hasText;
 
-/**
- * Sort ChangeLogs by 'order' value or class name (if no 'order' is set)
- *
- * @author lstolowski
- * @since 2014-09-17
- */
-public class ChangeLogComparator implements Comparator<Class<?>>, Serializable {
-  @Override
-  public int compare(Class<?> o1, Class<?> o2) {
-    ChangeLog c1 = o1.getAnnotation(ChangeLog.class);
-    ChangeLog c2 = o2.getAnnotation(ChangeLog.class);
-
-    String val1 = !(hasText(c1.order())) ? o1.getCanonicalName() : c1.order();
-    String val2 = !(hasText(c2.order())) ? o2.getCanonicalName() : c2.order();
-
-    if (val1 == null && val2 == null){
-      return 0;
-    } else if (val1 == null) {
-      return -1;
-    } else if (val2 == null) {
-      return 1;
+class ChangeLogComparator implements Comparator<Class<?>>, Serializable {
+    @Override
+    public int compare(Class<?> left, Class<?> right) {
+        ChangeLog leftChangeLog = left.getAnnotation(ChangeLog.class);
+        ChangeLog rightChangeLog = right.getAnnotation(ChangeLog.class);
+        String leftOrder = !(hasText(leftChangeLog.order())) ? left.getCanonicalName() : leftChangeLog.order();
+        String rightOrder = !(hasText(rightChangeLog.order())) ? right.getCanonicalName() : rightChangeLog.order();
+        if (leftOrder == null && rightOrder == null) {
+            return 0;
+        } else if (leftOrder == null) {
+            return -1;
+        } else if (rightOrder == null) {
+            return 1;
+        }
+        return leftOrder.compareTo(rightOrder);
     }
-
-    return val1.compareTo(val2);
-  }
 }
