@@ -9,7 +9,7 @@
 
     <groupId>com.github.cybuch</groupId>
     <artifactId>mongobeej</artifactId>
-    <version>0.15</version>
+    <version>0.16</version>
 
     <licenses>
         <license>
@@ -27,10 +27,6 @@
   </scm>
 
     <developers>
-        <developer>
-          <id>lstolowski</id>
-          <name>lstolowski</name>
-        </developer>
         <developer>
             <id>cybuch</id>
             <name>pnowak</name>
