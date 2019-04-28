@@ -43,7 +43,6 @@ public Mongobee mongobee(){
   runner.setDbName("yourDbName");         // host must be set if not set in URI
   runner.setChangeLogsScanPackage(
        "com.example.yourapp.changelogs"); // the package to be scanned for changesets
-  
   return runner;
 }
 ```
@@ -57,7 +56,6 @@ Mongobee runner = new Mongobee("mongodb://YOUR_DB_HOST:27017/DB_NAME");
 runner.setDbName("yourDbName");         // host must be set if not set in URI
 runner.setChangeLogsScanPackage(
      "com.example.yourapp.changelogs"); // package to scan for changesets
-
 runner.execute();         //  ------> starts migration changesets
 ```
 
@@ -90,8 +88,6 @@ public class DatabaseChangelog {
   public void importantWorkToDo(DB db){
      // task implementation
   }
-
-
 }
 ```
 #### @ChangeLog
