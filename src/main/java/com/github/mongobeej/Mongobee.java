@@ -1,20 +1,5 @@
 package com.github.mongobeej;
 
-import static com.mongodb.ServerAddress.defaultHost;
-import static com.mongodb.ServerAddress.defaultPort;
-import static org.springframework.util.StringUtils.hasText;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.List;
-
-import org.jongo.Jongo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.core.env.Environment;
-import org.springframework.data.mongodb.core.MongoTemplate;
-
 import com.github.mongobeej.changeset.ChangeEntry;
 import com.github.mongobeej.dao.ChangeEntryDao;
 import com.github.mongobeej.exception.MongobeeChangeSetException;
@@ -26,6 +11,20 @@ import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoDatabase;
+import org.jongo.Jongo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.core.env.Environment;
+import org.springframework.data.mongodb.core.MongoTemplate;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
+
+import static com.mongodb.ServerAddress.defaultHost;
+import static com.mongodb.ServerAddress.defaultPort;
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * Mongobee runner
@@ -198,17 +197,12 @@ public class Mongobee implements InitializingBean {
             logger.error(e.getMessage());
           }
         }
-      } catch (NoSuchMethodException e) {
-        throw new MongobeeException(e.getMessage(), e);
-      } catch (IllegalAccessException e) {
-        throw new MongobeeException(e.getMessage(), e);
-      } catch (InvocationTargetException e) {
-        Throwable targetException = e.getTargetException();
-        throw new MongobeeException(targetException.getMessage(), e);
-      } catch (InstantiationException e) {
-        throw new MongobeeException(e.getMessage(), e);
+      } catch (NoSuchMethodException | IllegalAccessException | InstantiationException exception) {
+        throw new MongobeeException(exception.getMessage(), exception);
+      } catch (InvocationTargetException exception) {
+        Throwable targetException = exception.getTargetException();
+        throw new MongobeeException(targetException.getMessage(), exception);
       }
-
     }
   }
 

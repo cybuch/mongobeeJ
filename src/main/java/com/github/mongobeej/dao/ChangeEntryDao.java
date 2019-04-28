@@ -221,5 +221,4 @@ public class ChangeEntryDao {
     public void setThrowExceptionIfCannotObtainLock(boolean throwExceptionIfCannotObtainLock) {
         this.throwExceptionIfCannotObtainLock = throwExceptionIfCannotObtainLock;
     }
-
 }
