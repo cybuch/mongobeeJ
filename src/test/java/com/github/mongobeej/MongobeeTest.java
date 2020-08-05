@@ -21,7 +21,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-import java.net.UnknownHostException;
 import java.util.Collections;
 
 import static com.github.mongobeej.utils.MongoEnvironmentCreator.DB_NAME;
@@ -36,8 +35,9 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class MongobeeTest {
     private static final String CHANGELOG_COLLECTION_NAME = "dbchangelog";
+    MongoEnvironment mongoEnvironment = createMongoEnvironment();
     @InjectMocks
-    private Mongobee mongobee = new Mongobee();
+    private Mongobee mongobee = new Mongobee(mongoEnvironment.getMongoClient());
     @Mock
     private ChangeEntryDao changeEntryDao;
     @Mock
@@ -47,8 +47,7 @@ public class MongobeeTest {
     private MongoDatabase mongoDatabase;
 
     @Before
-    public void init() throws MongobeeException, UnknownHostException {
-        MongoEnvironment mongoEnvironment = createMongoEnvironment();
+    public void init() throws MongobeeException {
         mongoDatabase = mongoEnvironment.getMongoDatabase();
         when(changeEntryDao.connectMongoDb(any(MongoClientURI.class), anyString()))
                 .thenReturn(mongoDatabase);
