@@ -9,7 +9,7 @@
 
     <groupId>com.github.cybuch</groupId>
     <artifactId>mongobeej</artifactId>
-    <version>0.17</version>
+    <version>0.18-SNAPSHOT</version>
 
     <licenses>
         <license>

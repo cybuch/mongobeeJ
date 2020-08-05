@@ -82,7 +82,7 @@ public class Mongobee implements InitializingBean {
 
     /**
      * <p>Constructor takes db.mongodb.MongoClient object as a parameter.
-     * </p><p>For more details about <tt>MongoClient</tt> please see com.mongodb.MongoClient docs
+     * </p><p>For more details about {@link MongoClient} please see com.mongodb.MongoClient docs
      * </p>
      *
      * @param legacyMongoClient database connection client
@@ -124,7 +124,7 @@ public class Mongobee implements InitializingBean {
 
     /**
      * <p>Constructor takes db.mongodb.client.MongoClient object as a parameter.
-     * </p><p>For more details about <tt>MongoClient</tt> please see com.mongodb.client.MongoClient docs
+     * </p><p>For more details about {@link com.mongodb.client.MongoClient} please see com.mongodb.client.MongoClient docs
      * </p>
      *
      * @param mongoClient database connection client
