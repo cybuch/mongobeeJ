@@ -1,13 +1,12 @@
 package com.github.mongobeej.changeset;
 
-import java.util.Date;
-
 import org.bson.Document;
+
+import java.util.Date;
 
 /**
  * Entry in the changes collection log {@link com.github.mongobeej.Mongobee#DEFAULT_CHANGELOG_COLLECTION_NAME}
  * Type: entity class.
- *
  */
 public class ChangeEntry {
     public static final String KEY_CHANGEID = "changeId";

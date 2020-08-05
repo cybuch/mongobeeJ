@@ -266,7 +266,7 @@ public class Mongobee implements InitializingBean {
         com.mongodb.client.MongoClient mongoClient;
         if (this.mongoClient != null) {
             mongoClient = this.mongoClient;
-        } else if (legacyMongoClient!= null) {
+        } else if (legacyMongoClient != null) {
             mongoClient = fromLegacyClient();
         } else {
             mongoClient = MongoClients.create(mongoClientURI.toString());
