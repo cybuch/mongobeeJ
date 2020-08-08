@@ -7,11 +7,10 @@ import com.github.mongobeej.exception.MongobeeConfigurationException;
 import com.github.mongobeej.exception.MongobeeException;
 import com.github.mongobeej.test.changelogs.MongobeeTestResource;
 import com.github.mongobeej.utils.MongoEnvironmentCreator.MongoEnvironment;
-import com.mongodb.DB;
+import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
-import org.jongo.Jongo;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,8 +41,6 @@ public class MongobeeTest {
     private ChangeEntryDao changeEntryDao;
     @Mock
     private ChangeEntryIndexDao indexDao;
-    @Mock
-    private DB db;
     private MongoDatabase mongoDatabase;
 
     @Before
@@ -51,9 +48,10 @@ public class MongobeeTest {
         mongoDatabase = mongoEnvironment.getMongoDatabase();
         when(changeEntryDao.connectMongoDb(any(MongoClientURI.class), anyString()))
                 .thenReturn(mongoDatabase);
-        when(changeEntryDao.getDb()).thenReturn(db);
-        when(db.getMongo()).thenReturn(mongoEnvironment.getMongoClient());
-        when(db.getName()).thenReturn(DB_NAME);
+        when(changeEntryDao.connectMongoDb(any(com.mongodb.client.MongoClient.class), anyString()))
+                .thenReturn(mongoDatabase);
+        when(changeEntryDao.connectMongoDb(any(MongoClient.class), anyString()))
+                .thenReturn(mongoDatabase);
         when(changeEntryDao.getMongoDatabase()).thenReturn(mongoDatabase);
         doCallRealMethod().when(changeEntryDao).save(any(ChangeEntry.class));
         doCallRealMethod().when(changeEntryDao).setChangelogCollectionName(anyString());
@@ -83,7 +81,7 @@ public class MongobeeTest {
         mongobee.execute();
 
         // then
-        verify(changeEntryDao, times(13)).save(any(ChangeEntry.class)); // 13 changesets saved to dbchangelog
+        verify(changeEntryDao, times(10)).save(any(ChangeEntry.class)); // 10 changesets saved to dbchangelog
 
         // dbchangelog collection checking
         long change1 = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
@@ -98,12 +96,9 @@ public class MongobeeTest {
         long change4 = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
                 .count(changeQuery("test4"));
         assertEquals(1, change4);
-        long change5 = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
-                .count(changeQuery("test5"));
-        assertEquals(1, change5);
         long changeAll = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
                 .count(new Document().append(ChangeEntry.KEY_AUTHOR, "testuser"));
-        assertEquals(12, changeAll);
+        assertEquals(9, changeAll);
     }
 
     @Test
@@ -127,16 +122,6 @@ public class MongobeeTest {
         mongobee.setMongoTemplate(mt);
         mongobee.afterPropertiesSet();
         verify(mt).getCollectionNames();
-    }
-
-    @Test
-    public void shouldUsePreConfiguredJongo() throws Exception {
-        Jongo jongo = mock(Jongo.class);
-        when(changeEntryDao.acquireProcessLock()).thenReturn(true);
-        when(jongo.getDatabase()).thenReturn(null);
-        mongobee.setJongo(jongo);
-        mongobee.afterPropertiesSet();
-        verify(jongo).getDatabase();
     }
 
     @Test
@@ -180,6 +165,7 @@ public class MongobeeTest {
         // given
         when(changeEntryDao.isProccessLockHeld()).thenReturn(true);
 
+        //when
         boolean inProgress = mongobee.isExecutionInProgress();
 
         // then
@@ -210,7 +196,5 @@ public class MongobeeTest {
     @After
     public void cleanUp() {
         mongobee.setMongoTemplate(null);
-        mongobee.setJongo(null);
     }
-
 }

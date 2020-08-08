@@ -4,6 +4,7 @@ import com.github.mongobeej.changeset.ChangeEntry;
 import com.github.mongobeej.dao.ChangeEntryDao;
 import com.github.mongobeej.dao.ChangeEntryIndexDao;
 import com.github.mongobeej.utils.MongoEnvironmentCreator;
+import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoDatabase;
 import org.junit.Before;
@@ -30,6 +31,10 @@ abstract class MongobeeBaseTest {
         mongobee = new Mongobee(mongoEnvironment.getMongoClient());
         mongoDatabase = mongoEnvironment.getMongoDatabase();
         when(changeEntryDao.connectMongoDb(any(MongoClientURI.class), anyString()))
+                .thenReturn(mongoDatabase);
+        when(changeEntryDao.connectMongoDb(any(com.mongodb.client.MongoClient.class), anyString()))
+                .thenReturn(mongoDatabase);
+        when(changeEntryDao.connectMongoDb(any(MongoClient.class), anyString()))
                 .thenReturn(mongoDatabase);
         when(changeEntryDao.getMongoDatabase()).thenReturn(mongoDatabase);
         when(changeEntryDao.acquireProcessLock()).thenReturn(true);

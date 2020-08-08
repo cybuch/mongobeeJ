@@ -20,12 +20,12 @@ With Maven
 <dependency>
   <groupId>com.github.cybuch</groupId>
   <artifactId>mongobeej</artifactId>
-  <version>0.17</version>
+  <version>1.0.0</version>
 </dependency>
 ```
 With Gradle
 ```groovy
-compile 'com.github.cybuch:mongobeej:0.17'
+compile 'com.github.cybuch:mongobeej:1.0.0'
 ```
 
 ### Migrating from Mongobee
@@ -38,9 +38,22 @@ In this case the migration process will be executed automatically on startup.
 
 ```java
 @Bean
-public Mongobee mongobee(){
+public Mongobee mongobee() {
   Mongobee runner = new Mongobee("mongodb://YOUR_DB_HOST:27017/DB_NAME");
-  runner.setDbName("yourDbName");         // host must be set if not set in URI
+  runner.setDbName("yourDbName");         // db name must be set if not set in URI
+  runner.setChangeLogsScanPackage(
+       "com.example.yourapp.changelogs"); // the package to be scanned for changesets
+  return runner;
+}
+```
+
+or
+
+```java
+@Bean
+public Mongobee mongobee(MongoClient mongoClient) {
+  Mongobee runner = new MongobeemongoClient);
+  runner.setDbName("yourDbName");         // db name must be set
   runner.setChangeLogsScanPackage(
        "com.example.yourapp.changelogs"); // the package to be scanned for changesets
   return runner;
@@ -53,7 +66,7 @@ Using mongobee without a spring context has similar configuration but you have t
 
 ```java
 Mongobee runner = new Mongobee("mongodb://YOUR_DB_HOST:27017/DB_NAME");
-runner.setDbName("yourDbName");         // host must be set if not set in URI
+runner.setDbName("yourDbName");         // db name must be set if not set in URI
 runner.setChangeLogsScanPackage(
      "com.example.yourapp.changelogs"); // package to scan for changesets
 runner.execute();         //  ------> starts migration changesets
@@ -71,7 +84,7 @@ MongoDB URI format:
 ```
 mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database[.collection]][?options]]
 ```
-[More about URI](http://mongodb.github.io/mongo-java-driver/3.5/javadoc/)
+[More about URI](https://docs.mongodb.com/manual/reference/connection-string/)
 
 
 ### Creating change logs
@@ -85,7 +98,7 @@ package com.example.yourapp.changelogs;
 public class DatabaseChangelog {
   
   @ChangeSet(order = "001", id = "someChangeId", author = "testAuthor")
-  public void importantWorkToDo(DB db){
+  public void importantWorkToDo(MongoTemplate mongoTemplate) {
      // task implementation
   }
 }
@@ -134,34 +147,16 @@ public void someChange2(MongoDatabase db) {
   mycollection.insertOne(doc);
 }
 
-@ChangeSet(order = "003", id = "someChangeWithDb", author = "testAuthor")
-public void someChange3(DB db) {
-  // This is deprecated in mongo-java-driver 3.x, use MongoDatabase instead
-  // type: com.mongodb.DB : original MongoDB driver v. 2.x, operations allowed by driver are possible
-  // example: 
-  DBCollection mycollection = db.getCollection("mycollection");
-  BasicDBObject doc = new BasicDBObject().append("test", "1");
-  mycollection .insert(doc);
-}
-
-@ChangeSet(order = "004", id = "someChangeWithJongo", author = "testAuthor")
-public void someChange4(Jongo jongo) {
-  // type: org.jongo.Jongo : Jongo driver can be used, used for simpler notation
-  // example:
-  MongoCollection mycollection = jongo.getCollection("mycollection");
-  mycollection.insert("{test : 1}");
-}
-
-@ChangeSet(order = "005", id = "someChangeWithSpringDataTemplate", author = "testAuthor")
-public void someChange5(MongoTemplate mongoTemplate) {
+@ChangeSet(order = "003", id = "someChangeWithSpringDataTemplate", author = "testAuthor")
+public void someChange3(MongoTemplate mongoTemplate) {
   // type: org.springframework.data.mongodb.core.MongoTemplate
   // Spring Data integration allows using MongoTemplate in the ChangeSet
   // example:
   mongoTemplate.save(myEntity);
 }
 
-@ChangeSet(order = "006", id = "someChangeWithSpringDataTemplate", author = "testAuthor")
-public void someChange5(MongoTemplate mongoTemplate, Environment environment) {
+@ChangeSet(order = "004", id = "someChangeWithSpringDataTemplate", author = "testAuthor")
+public void someChange4(MongoTemplate mongoTemplate, Environment environment) {
   // type: org.springframework.data.mongodb.core.MongoTemplate
   // type: org.springframework.core.env.Environment
   // Spring Data integration allows using MongoTemplate and Environment in the ChangeSet
@@ -177,7 +172,7 @@ _Example 1_: annotated change set will be invoked for a `dev` profile
 ```java
 @Profile("dev")
 @ChangeSet(author = "testuser", id = "myDevChangest", order = "01")
-public void devEnvOnly(DB db){
+public void devEnvOnly(MongoTemplate mongoTemplate) {
   // ...
 }
 ```
@@ -187,7 +182,7 @@ _Example 2_: all change sets in a changelog will be invoked for a `test` profile
 @Profile("test")
 public class ChangelogForTestEnv{
   @ChangeSet(author = "testuser", id = "myTestChangest", order = "01")
-  public void testingEnvOnly(DB db){
+  public void testingEnvOnly(MongoTemplate mongoTemplate) {
     // ...
   } 
 }
@@ -226,13 +221,13 @@ You can exclude mongo-java-driver from **mongobeeJ**  and use your dependency on
 <dependency>
     <groupId>org.mongodb</groupId>
     <artifactId>mongo-java-driver</artifactId>
-    <version>3.0.0</version>
+    <version>3.12.7</version>
 </dependency>
 
 <dependency>
   <groupId>com.github.mongobeej</groupId>
   <artifactId>mongobeej</artifactId>
-  <version>0.17</version>
+  <version>1.0.0</version>
   <exclusions>
     <exclusion>
       <groupId>org.mongodb</groupId>

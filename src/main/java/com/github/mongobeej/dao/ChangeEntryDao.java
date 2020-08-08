@@ -4,9 +4,9 @@ import com.github.mongobeej.changeset.ChangeEntry;
 import com.github.mongobeej.exception.MongobeeConfigurationException;
 import com.github.mongobeej.exception.MongobeeConnectionException;
 import com.github.mongobeej.exception.MongobeeLockException;
-import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
@@ -21,8 +21,8 @@ public class ChangeEntryDao {
     private static final Logger logger = LoggerFactory.getLogger("Mongobee dao");
 
     private MongoDatabase mongoDatabase;
-    private DB db;  // only for Jongo driver compatibility - do not use in other contexts
-    private MongoClient mongoClient;
+    private com.mongodb.client.MongoClient mongoClient;
+    private MongoClient legacyMongoClient;
     private ChangeEntryIndexDao indexDao;
     private String changelogCollectionName;
     private boolean waitForLock;
@@ -52,24 +52,26 @@ public class ChangeEntryDao {
         return mongoDatabase;
     }
 
-    /**
-     * @return com.mongodb.DB
-     * @deprecated implemented only for Jongo driver compatibility and backward compatibility - do not use in other contexts
-     */
-    public DB getDb() {
-        return db;
+    public MongoDatabase connectMongoDb(com.mongodb.client.MongoClient mongoClient, String dbName) throws MongobeeConfigurationException {
+        if (!hasText(dbName)) {
+            throw new MongobeeConfigurationException("DB name is not set. Should be defined in MongoDB URI or via setter");
+        } else {
+            this.mongoClient = mongoClient;
+            mongoDatabase = mongoClient.getDatabase(dbName);
+            ensureChangeLogCollectionIndex(mongoDatabase.getCollection(changelogCollectionName));
+            initializeLock();
+            return mongoDatabase;
+        }
     }
 
+
+    @Deprecated
     public MongoDatabase connectMongoDb(MongoClient mongo, String dbName) throws MongobeeConfigurationException {
         if (!hasText(dbName)) {
             throw new MongobeeConfigurationException("DB name is not set. Should be defined in MongoDB URI or via setter");
         } else {
-
-            this.mongoClient = mongo;
-
-            db = mongo.getDB(dbName); // for Jongo driver and backward compatibility (constructor has required parameter Jongo(DB) )
+            this.legacyMongoClient = mongo;
             mongoDatabase = mongo.getDatabase(dbName);
-
             ensureChangeLogCollectionIndex(mongoDatabase.getCollection(changelogCollectionName));
             initializeLock();
             return mongoDatabase;
@@ -77,9 +79,8 @@ public class ChangeEntryDao {
     }
 
     public MongoDatabase connectMongoDb(MongoClientURI mongoClientURI, String dbName)
-            throws MongobeeConfigurationException, MongobeeConnectionException {
-
-        final MongoClient mongoClient = new MongoClient(mongoClientURI);
+            throws MongobeeConfigurationException {
+        final com.mongodb.client.MongoClient mongoClient = MongoClients.create(mongoClientURI.toString());
         final String database = (!hasText(dbName)) ? mongoClientURI.getDatabase() : dbName;
         return this.connectMongoDb(mongoClient, database);
     }
@@ -166,7 +167,12 @@ public class ChangeEntryDao {
     }
 
     public void close() {
-        this.mongoClient.close();
+        if (legacyMongoClient != null) {
+            legacyMongoClient.close();
+        }
+        if (mongoClient != null) {
+            mongoClient.close();
+        }
     }
 
     private void initializeLock() {
