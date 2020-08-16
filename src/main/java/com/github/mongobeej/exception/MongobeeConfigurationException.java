@@ -5,7 +5,7 @@ package com.github.mongobeej.exception;
  * @since 01.08.14
  */
 public class MongobeeConfigurationException extends MongobeeException {
-  public MongobeeConfigurationException(String message) {
-    super(message);
-  }
+    public MongobeeConfigurationException(String message) {
+        super(message);
+    }
 }

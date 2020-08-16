@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MongobeeProfileTest extends MongobeeBaseTest {
-    private static final int CHANGELOG_COUNT = 13;
+    private static final int CHANGELOG_COUNT = 10;
 
     @Test
     public void shouldRunDevProfileAndNonAnnotated() throws Exception {
@@ -133,6 +133,5 @@ public class MongobeeProfileTest extends MongobeeBaseTest {
     @After
     public void cleanUp() {
         mongobee.setMongoTemplate(null);
-        mongobee.setJongo(null);
     }
 }

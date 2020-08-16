@@ -3,7 +3,6 @@ package com.github.mongobeej;
 import com.github.mongobeej.changeset.ChangeEntry;
 import com.github.mongobeej.resources.EnvironmentMock;
 import com.github.mongobeej.test.changelogs.EnvironmentDependentTestResource;
-import org.bson.Document;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
