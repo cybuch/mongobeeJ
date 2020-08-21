@@ -4,8 +4,8 @@ import com.github.mongobeej.changeset.ChangeEntry;
 import com.github.mongobeej.dao.ChangeEntryDao;
 import com.github.mongobeej.dao.ChangeEntryIndexDao;
 import com.github.mongobeej.utils.MongoEnvironmentCreator;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
+import com.mongodb.ConnectionString;
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import org.junit.Before;
 import org.mockito.Mock;
@@ -30,9 +30,7 @@ abstract class MongobeeBaseTest {
         MongoEnvironmentCreator.MongoEnvironment mongoEnvironment = MongoEnvironmentCreator.createMongoEnvironment();
         mongobee = new Mongobee(mongoEnvironment.getMongoClient());
         mongoDatabase = mongoEnvironment.getMongoDatabase();
-        when(changeEntryDao.connectMongoDb(any(MongoClientURI.class), anyString()))
-                .thenReturn(mongoDatabase);
-        when(changeEntryDao.connectMongoDb(any(com.mongodb.client.MongoClient.class), anyString()))
+        when(changeEntryDao.connectMongoDb(any(ConnectionString.class), anyString()))
                 .thenReturn(mongoDatabase);
         when(changeEntryDao.connectMongoDb(any(MongoClient.class), anyString()))
                 .thenReturn(mongoDatabase);

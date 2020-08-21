@@ -9,7 +9,7 @@
 
     <groupId>com.github.cybuch</groupId>
     <artifactId>mongobeej</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
 
     <licenses>
         <license>
@@ -53,8 +53,8 @@
     <dependencies>
         <dependency>
             <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
-            <version>3.12.7</version>
+            <artifactId>mongodb-driver-sync</artifactId>
+            <version>4.0.5</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

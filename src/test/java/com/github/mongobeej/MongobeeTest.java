@@ -7,8 +7,8 @@ import com.github.mongobeej.exception.MongobeeConfigurationException;
 import com.github.mongobeej.exception.MongobeeException;
 import com.github.mongobeej.test.changelogs.MongobeeTestResource;
 import com.github.mongobeej.utils.MongoEnvironmentCreator.MongoEnvironment;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
+import com.mongodb.ConnectionString;
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.junit.After;
@@ -46,9 +46,7 @@ public class MongobeeTest {
     @Before
     public void init() throws MongobeeException {
         mongoDatabase = mongoEnvironment.getMongoDatabase();
-        when(changeEntryDao.connectMongoDb(any(MongoClientURI.class), anyString()))
-                .thenReturn(mongoDatabase);
-        when(changeEntryDao.connectMongoDb(any(com.mongodb.client.MongoClient.class), anyString()))
+        when(changeEntryDao.connectMongoDb(any(ConnectionString.class), anyString()))
                 .thenReturn(mongoDatabase);
         when(changeEntryDao.connectMongoDb(any(MongoClient.class), anyString()))
                 .thenReturn(mongoDatabase);
@@ -65,7 +63,7 @@ public class MongobeeTest {
 
     @Test(expected = MongobeeConfigurationException.class)
     public void shouldThrowAnExceptionIfNoDbNameSet() throws Exception {
-        Mongobee runner = new Mongobee(new MongoClientURI("mongodb://localhost:27017/"));
+        Mongobee runner = new Mongobee(new ConnectionString("mongodb://localhost:27017/"));
         runner.setEnabled(true);
         runner.setChangeLogsScanPackage(MongobeeTestResource.class.getPackage().getName());
         runner.execute();
@@ -85,19 +83,19 @@ public class MongobeeTest {
 
         // dbchangelog collection checking
         long change1 = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
-                .count(changeQuery("test1"));
+                .countDocuments(changeQuery("test1"));
         assertEquals(1, change1);
         long change2 = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
-                .count(changeQuery("test2"));
+                .countDocuments(changeQuery("test2"));
         assertEquals(1, change2);
         long change3 = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
-                .count(changeQuery("test3"));
+                .countDocuments(changeQuery("test3"));
         assertEquals(1, change3);
         long change4 = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
-                .count(changeQuery("test4"));
+                .countDocuments(changeQuery("test4"));
         assertEquals(1, change4);
         long changeAll = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
-                .count(new Document().append(ChangeEntry.KEY_AUTHOR, "testuser"));
+                .countDocuments(new Document().append(ChangeEntry.KEY_AUTHOR, "testuser"));
         assertEquals(9, changeAll);
     }
 

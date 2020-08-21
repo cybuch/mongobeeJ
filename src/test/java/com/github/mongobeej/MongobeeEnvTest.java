@@ -27,7 +27,7 @@ public class MongobeeEnvTest extends MongobeeBaseTest {
 
         // then
         long change1 = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
-                .count(changeQuery("Envtest1"));
+                .countDocuments(changeQuery("Envtest1"));
         assertEquals(1, change1);
 
     }
@@ -44,7 +44,7 @@ public class MongobeeEnvTest extends MongobeeBaseTest {
 
         // then
         long change1 = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
-                .count(changeQuery("Envtest1"));
+                .countDocuments(changeQuery("Envtest1"));
         assertEquals(1, change1);
 
     }

@@ -7,10 +7,8 @@ import com.github.mongobeej.exception.MongobeeConfigurationException;
 import com.github.mongobeej.exception.MongobeeConnectionException;
 import com.github.mongobeej.exception.MongobeeException;
 import com.github.mongobeej.utils.ChangeService;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
-import com.mongodb.MongoClientSettings;
-import com.mongodb.MongoClientURI;
+import com.mongodb.ConnectionString;
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import org.slf4j.Logger;
@@ -25,7 +23,6 @@ import java.util.List;
 
 import static com.mongodb.ServerAddress.defaultHost;
 import static com.mongodb.ServerAddress.defaultPort;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
@@ -46,9 +43,8 @@ public class Mongobee implements InitializingBean {
     private ChangeEntryDao dao;
     private boolean enabled = true;
     private String changeLogsScanPackage;
-    private MongoClientURI mongoClientURI;
-    private MongoClient legacyMongoClient;
-    private com.mongodb.client.MongoClient mongoClient;
+    private ConnectionString mongoClientURI;
+    private MongoClient mongoClient;
     private String dbName;
     private Environment springEnvironment;
     private MongoTemplate mongoTemplate;
@@ -60,7 +56,7 @@ public class Mongobee implements InitializingBean {
      * <p>It is recommended to use constructors with MongoURI</p>
      */
     public Mongobee() {
-        this(new MongoClientURI("mongodb://" + defaultHost() + ":" + defaultPort() + "/"));
+        this(new ConnectionString("mongodb://" + defaultHost() + ":" + defaultPort() + "/"));
     }
 
     /**
@@ -69,25 +65,11 @@ public class Mongobee implements InitializingBean {
      * </p>
      *
      * @param mongoClientURI uri to your db
-     * @see MongoClientURI
+     * @see ConnectionString
      */
-    public Mongobee(MongoClientURI mongoClientURI) {
+    public Mongobee(ConnectionString mongoClientURI) {
         this.mongoClientURI = mongoClientURI;
         this.setDbName(mongoClientURI.getDatabase());
-        this.dao = new ChangeEntryDao(DEFAULT_CHANGELOG_COLLECTION_NAME, DEFAULT_LOCK_COLLECTION_NAME, DEFAULT_WAIT_FOR_LOCK,
-                DEFAULT_CHANGE_LOG_LOCK_WAIT_TIME, DEFAULT_CHANGE_LOG_LOCK_POLL_RATE, DEFAULT_THROW_EXCEPTION_IF_CANNOT_OBTAIN_LOCK);
-    }
-
-    /**
-     * <p>Constructor takes db.mongodb.MongoClient object as a parameter.
-     * </p><p>For more details about {@link MongoClient} please see com.mongodb.MongoClient docs
-     * </p>
-     *
-     * @param legacyMongoClient database connection client
-     * @see MongoClient
-     */
-    public Mongobee(MongoClient legacyMongoClient) {
-        this.legacyMongoClient = legacyMongoClient;
         this.dao = new ChangeEntryDao(DEFAULT_CHANGELOG_COLLECTION_NAME, DEFAULT_LOCK_COLLECTION_NAME, DEFAULT_WAIT_FOR_LOCK,
                 DEFAULT_CHANGE_LOG_LOCK_WAIT_TIME, DEFAULT_CHANGE_LOG_LOCK_POLL_RATE, DEFAULT_THROW_EXCEPTION_IF_CANNOT_OBTAIN_LOCK);
     }
@@ -114,10 +96,10 @@ public class Mongobee implements InitializingBean {
      * <p>For details, please see com.mongodb.MongoClientURI
      *
      * @param mongoURI with correct format
-     * @see com.mongodb.MongoClientURI
+     * @see com.mongodb.ConnectionString
      */
     public Mongobee(String mongoURI) {
-        this(new MongoClientURI(mongoURI));
+        this(new ConnectionString(mongoURI));
     }
 
     /**
@@ -159,8 +141,6 @@ public class Mongobee implements InitializingBean {
 
         if (mongoClient != null) {
             dao.connectMongoDb(mongoClient, dbName);
-        } else if (this.legacyMongoClient != null) {
-            dao.connectMongoDb(this.legacyMongoClient, dbName);
         } else {
             dao.connectMongoDb(this.mongoClientURI, dbName);
         }
@@ -255,59 +235,10 @@ public class Mongobee implements InitializingBean {
         com.mongodb.client.MongoClient mongoClient;
         if (this.mongoClient != null) {
             mongoClient = this.mongoClient;
-        } else if (legacyMongoClient != null) {
-            mongoClient = fromLegacyClient();
         } else {
             mongoClient = MongoClients.create(mongoClientURI.toString());
         }
         return new MongoTemplate(mongoClient, dbName);
-    }
-
-    private com.mongodb.client.MongoClient fromLegacyClient() {
-        MongoClientOptions mongoClientOptions = legacyMongoClient.getMongoClientOptions();
-        MongoClientSettings.Builder mongoClientSettingsBuilder = MongoClientSettings.builder()
-                .readPreference(legacyMongoClient.getReadPreference())
-                .writeConcern(legacyMongoClient.getWriteConcern())
-                .retryWrites(mongoClientOptions.getRetryWrites())
-                .readConcern(legacyMongoClient.getReadConcern())
-                .codecRegistry(mongoClientOptions.getCodecRegistry())
-                .compressorList(mongoClientOptions.getCompressorList())
-                .applicationName(mongoClientOptions.getApplicationName())
-                .commandListenerList(mongoClientOptions.getCommandListeners())
-                .codecRegistry(mongoClientOptions.getCodecRegistry())
-                .applyToClusterSettings(clusterSettings -> {
-                    clusterSettings.hosts(legacyMongoClient.getAllAddress());
-                    clusterSettings.localThreshold(mongoClientOptions.getLocalThreshold(), MILLISECONDS);
-                    clusterSettings.serverSelectionTimeout(mongoClientOptions.getServerSelectionTimeout(), MILLISECONDS);
-                    clusterSettings.serverSelector(mongoClientOptions.getServerSelector());
-                    clusterSettings.requiredReplicaSetName(mongoClientOptions.getRequiredReplicaSetName());
-                    mongoClientOptions.getClusterListeners().forEach(clusterSettings::addClusterListener);
-                })
-                .applyToConnectionPoolSettings(connectionPoolSettings -> {
-                    mongoClientOptions.getConnectionPoolListeners().forEach(connectionPoolSettings::addConnectionPoolListener);
-                    connectionPoolSettings.maxConnectionIdleTime(mongoClientOptions.getMaxConnectionIdleTime(), MILLISECONDS);
-                    connectionPoolSettings.maxConnectionLifeTime(mongoClientOptions.getMaxConnectionLifeTime(), MILLISECONDS);
-                    connectionPoolSettings.maxWaitTime(mongoClientOptions.getMaxWaitTime(), MILLISECONDS);
-                })
-                .applyToSocketSettings(socketSettings -> {
-                    socketSettings.connectTimeout(mongoClientOptions.getConnectTimeout(), MILLISECONDS);
-                    socketSettings.readTimeout(mongoClientOptions.getSocketTimeout(), MILLISECONDS);
-                })
-                .applyToServerSettings(serverSettings -> {
-                    mongoClientOptions.getServerListeners().forEach(serverSettings::addServerListener);
-                    serverSettings.minHeartbeatFrequency(mongoClientOptions.getMinHeartbeatFrequency(), MILLISECONDS);
-                    serverSettings.heartbeatFrequency(mongoClientOptions.getHeartbeatFrequency(), MILLISECONDS);
-
-                })
-                .applyToSslSettings(sslSettings -> {
-                    sslSettings.enabled(mongoClientOptions.isSslEnabled());
-                    sslSettings.invalidHostNameAllowed(mongoClientOptions.isSslInvalidHostNameAllowed());
-                    sslSettings.context(mongoClientOptions.getSslContext());
-                });
-        if (legacyMongoClient.getCredential() != null) {
-            mongoClientSettingsBuilder.credential(legacyMongoClient.getCredential());
-        }
-        return MongoClients.create(mongoClientSettingsBuilder.build());
     }
 
     private void validateConfig() throws MongobeeConfigurationException {
@@ -344,7 +275,7 @@ public class Mongobee implements InitializingBean {
      * @param mongoClientURI object with defined mongo uri
      * @return Mongobee object for fluent interface
      */
-    public Mongobee setMongoClientURI(MongoClientURI mongoClientURI) {
+    public Mongobee setMongoClientURI(ConnectionString mongoClientURI) {
         this.mongoClientURI = mongoClientURI;
         return this;
     }

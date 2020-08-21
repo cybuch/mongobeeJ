@@ -1,7 +1,7 @@
 package com.github.mongobeej.utils;
 
-import com.mongodb.MongoClient;
-import com.mongodb.ServerAddress;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
@@ -34,7 +34,8 @@ public class MongoEnvironmentCreator {
     public static MongoEnvironment createMongoEnvironment() {
         MongoServer mongoServer = new MongoServer(new MemoryBackend());
         InetSocketAddress serverAddress = mongoServer.bind();
-        MongoClient mongoClient = new MongoClient(new ServerAddress(serverAddress));
+        String mongoUri = "mongodb:/" + serverAddress.getAddress().toString() + ":" + serverAddress.getPort() + "/" + DB_NAME;
+        MongoClient mongoClient = MongoClients.create(mongoUri);
         return new MongoEnvironment(mongoClient);
     }
 }
