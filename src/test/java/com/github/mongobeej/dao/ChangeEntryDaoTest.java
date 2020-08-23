@@ -4,7 +4,7 @@ import com.github.mongobeej.exception.MongobeeConfigurationException;
 import com.github.mongobeej.exception.MongobeeLockException;
 import com.github.mongobeej.utils.MongoDatabaseArgumentMatcher;
 import com.github.mongobeej.utils.MongoEnvironmentCreator.MongoEnvironment;
-import com.mongodb.MongoClient;
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;

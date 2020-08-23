@@ -5,7 +5,6 @@ import com.github.mongobeej.resources.EnvironmentMock;
 import com.github.mongobeej.test.changelogs.AnotherMongobeeTestResource;
 import com.github.mongobeej.test.profiles.def.UnProfiledChangeLog;
 import com.github.mongobeej.test.profiles.dev.ProfiledDevChangeLog;
-import org.bson.Document;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,13 +31,13 @@ public class MongobeeProfileTest extends MongobeeBaseTest {
 
         // then
         long change1 = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
-                .count(changeQuery("Pdev1"));
+                .countDocuments(changeQuery("Pdev1"));
         assertEquals(1, change1);  //  no-@Profile  should not match
         long change2 = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
-                .count(changeQuery("Pdev4"));
+                .countDocuments(changeQuery("Pdev4"));
         assertEquals(1, change2);  //  @Profile("dev")  should not match
         long change3 = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
-                .count(changeQuery("Pdev3"));
+                .countDocuments(changeQuery("Pdev3"));
         assertEquals(0, change3);  //  @Profile("default")  should not match
     }
 
@@ -54,19 +53,19 @@ public class MongobeeProfileTest extends MongobeeBaseTest {
 
         // then
         long change1 = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
-                .count(changeQuery("Pdev1"));
+                .countDocuments(changeQuery("Pdev1"));
         assertEquals(1, change1);
         long change2 = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
-                .count(changeQuery("Pdev2"));
+                .countDocuments(changeQuery("Pdev2"));
         assertEquals(1, change2);
         long change3 = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
-                .count(changeQuery("Pdev3"));
+                .countDocuments(changeQuery("Pdev3"));
         assertEquals(1, change3);  //  @Profile("dev")  should not match
         long change4 = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
-                .count(changeQuery("Pdev4"));
+                .countDocuments(changeQuery("Pdev4"));
         assertEquals(0, change4);  //  @Profile("pro")  should not match
         long change5 = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
-                .count(changeQuery("Pdev5"));
+                .countDocuments(changeQuery("Pdev5"));
         assertEquals(1, change5);  //  @Profile("!pro")  should match
     }
 
@@ -81,7 +80,7 @@ public class MongobeeProfileTest extends MongobeeBaseTest {
         mongobee.execute();
 
         // then
-        long changes = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document());
+        long changes = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments();
         assertEquals(0, changes);
     }
 
@@ -96,7 +95,7 @@ public class MongobeeProfileTest extends MongobeeBaseTest {
         mongobee.execute();
 
         // then
-        long changes = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document());
+        long changes = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments();
         assertEquals(CHANGELOG_COUNT, changes);
     }
 
@@ -111,7 +110,7 @@ public class MongobeeProfileTest extends MongobeeBaseTest {
         mongobee.execute();
 
         // then
-        long changes = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document());
+        long changes = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments();
         assertEquals(CHANGELOG_COUNT, changes);
     }
 
@@ -126,7 +125,7 @@ public class MongobeeProfileTest extends MongobeeBaseTest {
         mongobee.execute();
 
         // then
-        long changes = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document());
+        long changes = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments();
         assertEquals(CHANGELOG_COUNT, changes);
     }
 

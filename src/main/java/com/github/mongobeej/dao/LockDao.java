@@ -65,7 +65,7 @@ public class LockDao {
      * @return true if the lock is currently held
      */
     public boolean isLockHeld(MongoDatabase db) {
-        return db.getCollection(lockCollectionName).count() == 1;
+        return db.getCollection(lockCollectionName).countDocuments() == 1;
     }
 
     public void setLockCollectionName(String lockCollectionName) {

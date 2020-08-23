@@ -1,17 +1,19 @@
 [![Licence](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/cybuch/mongobeeJ/blob/master/LICENSE)
 ---
 
-
 **mongobeeJ** is a Java tool which helps you to *manage changes* in your MongoDB and *synchronize* them with your application.
 The concept is very similar to other db migration tools such as [Liquibase](http://www.liquibase.org) or [Flyway](http://flywaydb.org) but *without using XML/JSON/YML files*.
 mongobeeJ is built on top of [mongobee](https://github.com/mongobee/mongobee)
 
 The goal is to keep this tool simple and comfortable to use.
 
-
 **mongobeeJ** provides new approach for adding changes (change sets) based on Java classes and methods with appropriate annotations.
 
-## Getting started
+## Deprecation Notice 
+**mongobeeJ** is no longer actively developed. It will be supported (bug fixes and dependency upgrades) for the sake of legacy projects that use **mongobeeJ** or **mongobee**. 
+However, it's recommended to migrate active projects from **mongobeeJ** to other tools like [Mongock](https://github.com/cloudyrock/mongock) or [Sherlock](https://coditory.github.io/sherlock-distributed-lock/migrator/).
+
+### Getting started
 
 ### Add a dependency
 
@@ -20,12 +22,12 @@ With Maven
 <dependency>
   <groupId>com.github.cybuch</groupId>
   <artifactId>mongobeej</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 </dependency>
 ```
 With Gradle
 ```groovy
-compile 'com.github.cybuch:mongobeej:1.0.0'
+compile 'com.github.cybuch:mongobeej:1.0.1'
 ```
 
 ### Migrating from Mongobee
@@ -199,40 +201,4 @@ public Mongobee mongobee(Environment environment) {
   runner.setSpringEnvironment(environment)
   //... etc
 }
-```
-
-## Known issues
-
-##### Mongo java driver conflicts
-
-**mongobeeJ** depends on `mongo-java-driver`. If your application has mongo-java-driver dependency too, there could be a library conflicts in some cases.
-
-**Exception**:
-```
-com.mongodb.WriteConcernException: { "serverUsed" : "localhost" , 
-"err" : "invalid ns to index" , "code" : 10096 , "n" : 0 , 
-"connectionId" : 955 , "ok" : 1.0}
-```
-
-**Workaround**:
-
-You can exclude mongo-java-driver from **mongobeeJ**  and use your dependency only. Maven example (pom.xml) below:
-```xml
-<dependency>
-    <groupId>org.mongodb</groupId>
-    <artifactId>mongo-java-driver</artifactId>
-    <version>3.12.7</version>
-</dependency>
-
-<dependency>
-  <groupId>com.github.mongobeej</groupId>
-  <artifactId>mongobeej</artifactId>
-  <version>1.0.0</version>
-  <exclusions>
-    <exclusion>
-      <groupId>org.mongodb</groupId>
-      <artifactId>mongo-java-driver</artifactId>
-    </exclusion>
-  </exclusions>
-</dependency>
 ```
